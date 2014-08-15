@@ -1,0 +1,108 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.jian.common</groupId>
+		<artifactId>common_framework</artifactId>
+		<version>1.1.0</version>
+	</parent>
+
+	<artifactId>common_framework_1</artifactId>
+	<packaging>pom</packaging>
+	<name>common_framework_1</name>
+	<description>common_framework_1</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.jian.common</groupId>
+			<artifactId>udf</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>testpkg</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<inherited>false</inherited>
+				<configuration>
+					<descriptors>
+                        <descriptor>tp_assembly_lib.xml</descriptor>
+						<descriptor>tp_assembly_common_rules.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>native_libs</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>common_rule_config</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>${basedir}/build.sh</executable>
+							<workingDirectory>${basedir}</workingDirectory>
+							<arguments>
+								<argument>-version</argument>
+								<argument>${version}</argument>
+								<argument>--target_dir</argument>
+								<argument>${project.build.directory}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unit_test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>./perl_ut.pl</executable>
+                            <workingDirectory>${basedir}/../scripts</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>secondary</id>
+			<build>
+				<plugins>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>
+ 
